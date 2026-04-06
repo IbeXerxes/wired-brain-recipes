@@ -417,10 +417,26 @@ def build_weekly_summary(data, dates):
         dd = data["daily"]["time"]
         if ds not in dd: continue
         d   = dd.index(ds)
+        wmo = data["daily"]["weathercode"][d]
+        hi  = data["daily"]["temperature_2m_max"][d]
+        lo  = data["daily"]["temperature_2m_min"][d]
         pp  = data["daily"]["precipitation_probability_max"][d]
-        bg  = rain_bg(pp)
         lbl = datetime.date.fromisoformat(ds).strftime("%a %-d")
-        cells.append
+        bg  = rain_bg(pp)
+        cells.append(
+            f"<td style='text-align:center;padding:10px 6px;background:{bg};border-right:1px solid #dee2e6;'>"
+            f"<div style='font-size:11px;color:#6c757d;'>{lbl}</div>"
+            f"<div style='font-size:22px;'>{wmo_emoji(wmo)}</div>"
+            f"<div style='font-size:13px;font-weight:bold;'>{hi:.0f}° / {lo:.0f}°</div>"
+            f"<div style='font-size:12px;color:#6c757d;'>{pp:.0f}% rain</div></td>"
+        )
+    return (
+        "<div style='margin:0 0 28px;'>"
+        "<h2 style='font-family:sans-serif;font-size:16px;color:#2c3e50;margin:0 0 8px;'>&#128197; 7-Day Overview</h2>"
+        "<div style='overflow-x:auto;'>"
+        "<table style='border-collapse:collapse;width:100%;min-width:500px;font-family:sans-serif;border:1px solid #dee2e6;border-radius:8px;overflow:hidden;'>"
+        "<tbody><tr>" + "".join(cells) + "</tr></tbody></table></div></div>"
+    )
 
 
 def build_worst_warning(worst):
