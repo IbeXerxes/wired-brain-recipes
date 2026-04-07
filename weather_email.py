@@ -128,14 +128,18 @@ def fetch_json(url):
         return json.loads(r.read().decode())
 
 def fetch_weather():
-    for attempt in range(2):
+    import time
+    delays = [5, 15, 30]
+    for attempt in range(4):
         try:
             return fetch_json(WEATHER_URL)
         except Exception as e:
-            if attempt == 0:
-                import time; print(f"Retry... ({e})"); time.sleep(3)
+            if attempt < 3:
+                wait = delays[attempt]
+                print(f"Attempt {attempt+1} failed ({e}), retrying in {wait}s...")
+                time.sleep(wait)
             else:
-                raise RuntimeError(f"Weather fetch failed: {e}")
+                raise RuntimeError(f"Weather fetch failed after 4 attempts: {e}")
 
 def fetch_wisdom_quote():
     try:
